@@ -13,10 +13,10 @@ contract Splitter {
     address public bob;
     address public carol;
     
-	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+	event LogDeath(address indexed _from);
 
-	function Splitter(address _alice, address _bob, address _carol) {
-        owner = tx.origin;
+	function Splitter(address _alice, address _bob, address _carol) public {
+        owner = msg.sender;
         alice = _alice;
         bob = _bob;
         carol = _carol;
@@ -24,30 +24,15 @@ contract Splitter {
 
     function () payable {
         if(msg.sender==alice) {
-            bob.send(msg.value/2);
-            carol.send(msg.value/2);
+            bob.transfer(msg.value/2);
+            carol.transfer(msg.value/2);
         }
     }
-    
 
-	function sendCoin(address receiver, uint amount) returns(bool sufficient) {
-		if (balances[msg.sender] < amount) return false;
-		balances[msg.sender] -= amount;
-		balances[receiver] += amount;
-		Transfer(msg.sender, receiver, amount);
-		return true;
-	}
-
-	function getBalanceInEth(address addr) returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
-	}
-
-	function getBalance(address addr) returns(uint) {
-		return balances[addr];
-	}
-
-    function kill() public onlyowner {
-      owner.send(this.balance);
+    function kill() public {
+      if(msg.sender!=owner) revert();
+      LogDeath(owner);
+      owner.transfer(this.balance);
       selfdestruct(owner);
     }
 }
