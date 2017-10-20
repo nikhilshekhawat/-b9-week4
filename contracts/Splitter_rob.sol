@@ -6,23 +6,24 @@ pragma solidity ^0.4.4;
 // coin/token contracts. If you want to create a standards-compliant
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
-contract Splitter {
+contract Splitter_rob {
 
     address owner;
     mapping(address => uint256) balances;
-
+    bool isRunning;
+    
 	event LogDeath(address indexed _from);
-    event LogTransfer(address From, address To1, address To2, uint amount)
+    event LogTransfer(address From, address To1, address To2, uint amount);
 
-	function Splitter() public {
+	function Splitter_rob() public {
         owner = msg.sender;    
 	}
 
     function splitFunds(address receiver1, address receiver2, uint256 amount) returns(bool success) {
-        if(balance[msg.sender] < amount) return false;
-        balance[msg.sender] -= amount;
-        balance[receiver1] += amount/2;
-        balance[receiver2] += amount/2;
+        if(balances[msg.sender] < amount) return false;
+        balances[msg.sender] -= amount;
+        balances[receiver1] += amount/2;
+        balances[receiver2] += amount/2;
         return false;
     }
     
@@ -36,6 +37,7 @@ contract Splitter {
     onlyIfRunning 
     {
       if(msg.sender!=owner) revert();
+      isRunning = false;
       LogDeath(owner);
       owner.transfer(this.balance);
       selfdestruct(owner);
