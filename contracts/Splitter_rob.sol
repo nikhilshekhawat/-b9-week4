@@ -27,16 +27,13 @@ contract Splitter_rob {
     payable
     returns(bool success) 
     {
-        if(balances[msg.sender] < msg.value) return false;
-        balances[msg.sender] -= msg.value;
         balances[receiver1] += msg.value/2;
-        balances[receiver2] += msg.value/2;
+        balances[receiver2] += msg.value/2 + msg.value%2;
         LogTransfer(msg.sender, receiver1, receiver2, msg.value);
         return false;
     }
 
-    function withdraw(uint256 amount) 
-    payable 
+    function withdraw(uint256 amount)  
     returns(bool success)
     {
         if(balances[msg.sender] < amount) return false;
