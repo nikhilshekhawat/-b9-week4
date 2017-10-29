@@ -25,7 +25,7 @@ contract Splitter {
     function () payable {
         if(msg.sender==alice) {
             bob.transfer(msg.value/2);
-            carol.transfer(msg.value/2);
+            carol.transfer(msg.value - msg.value/2);
         }
     }
 
